@@ -6,14 +6,17 @@ function register() {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
-  fetch("https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ username, email, password }),
-  })
+  fetch(
+    "https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/register",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ username, email, password }),
+    }
+  )
     .then((response) => response.text())
     .then((data) => alert(data))
     .catch((error) => console.error("Error:", error));
@@ -39,7 +42,9 @@ function login() {
 }
 
 function initWebSocket() {
-  socket = new WebSocket("wss://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev");
+  socket = new WebSocket(
+    "wss://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev"
+  );
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
@@ -50,11 +55,9 @@ function initWebSocket() {
     if (data.error) {
       console.error("WebSocket error:", data.error);
     } else {
-      const { username, message, timestamp } = data;
+      const { username, message } = data;
       const messages = document.getElementById("messages");
-      messages.innerHTML += `<p><strong>${username}</strong>: ${message} <em>${new Date(
-        timestamp
-      ).toLocaleTimeString()}</em></p>`;
+      messages.innerHTML += `<p><strong>${username}</strong> ${message}</p>`;
     }
   };
 
@@ -69,6 +72,8 @@ function initWebSocket() {
 
 function sendMessage() {
   const message = document.getElementById("message").value;
+
+  document.getElementById("message").value = "";
   if (socket.readyState === WebSocket.OPEN) {
     socket.send(JSON.stringify({ token, message }));
   } else {
