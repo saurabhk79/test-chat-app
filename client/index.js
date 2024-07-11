@@ -6,31 +6,14 @@ function register() {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
-  console.log("register running!");
-
-  // fetch("https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/", {
-
-  // })
-  //   .then((response) => response.text())
-  //   .then((data) => alert(data))
-  //   .catch((error) => console.error("Error:", error));
-
-  fetch(
-    "https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/register",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      credentials: "include", // Include credentials if your API requires authentication
-      body: JSON.stringify({
-        username: "yourUsername",
-        email: "yourEmail",
-        password: "yourPassword",
-      }),
-    }
-  )
+  fetch("https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ username, email, password }),
+  })
     .then((response) => response.text())
     .then((data) => alert(data))
     .catch((error) => console.error("Error:", error));
@@ -39,9 +22,10 @@ function register() {
 function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
-  fetch("https://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev/login", {
+  fetch("https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ email, password }),
   })
     .then((response) => response.json())
@@ -55,21 +39,39 @@ function login() {
 }
 
 function initWebSocket() {
-  socket = io("https://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev");
-  socket.on("message", function (data) {
-    const { username, message, timestamp } = data;
-    const messages = document.getElementById("messages");
-    messages.innerHTML += `<p><strong>${username}</strong>: ${message} <em>${new Date(
-      timestamp
-    ).toLocaleTimeString()}</em></p>`;
-  });
+  socket = new WebSocket("wss://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev");
 
-  socket.on("error", function (data) {
-    console.error("Socket error:", data.message);
-  });
+  socket.onopen = () => {
+    console.log("WebSocket connection established");
+  };
+
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.error) {
+      console.error("WebSocket error:", data.error);
+    } else {
+      const { username, message, timestamp } = data;
+      const messages = document.getElementById("messages");
+      messages.innerHTML += `<p><strong>${username}</strong>: ${message} <em>${new Date(
+        timestamp
+      ).toLocaleTimeString()}</em></p>`;
+    }
+  };
+
+  socket.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+
+  socket.onclose = () => {
+    console.log("WebSocket connection closed");
+  };
 }
 
 function sendMessage() {
   const message = document.getElementById("message").value;
-  socket.emit("message", { token, message });
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ token, message }));
+  } else {
+    console.error("WebSocket is not open. Ready state is:", socket.readyState);
+  }
 }

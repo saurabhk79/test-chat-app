@@ -3,8 +3,8 @@ const express = require("express");
 const http = require("http");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-// const socketIO = require("socket.io");
 const cors = require("cors");
+const WebSocket = require("ws");
 
 const User = require("./models/user");
 const Message = require("./models/message");
@@ -18,8 +18,30 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-app.use(cors());
-// app.options("*", cors());
+
+const allowedOrigins = [
+  "https://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev",
+  "https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev",
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, origin);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Access-Control-Allow-Origin",
+  ],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 mongoose
   .connect(process.env.MONGODB_URI)
@@ -28,39 +50,45 @@ mongoose
 
 const server = http.createServer(app);
 
-// const io = socketIO(server, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
+const wss = new WebSocket.Server({ server });
 
-// io.on("connection", (socket) => {
-//   console.log("Socket connected:", socket.id);
+wss.on("connection", (ws) => {
+  console.log("WebSocket connected");
 
-//   socket.on("message", async (data) => {
-//     const { token, message } = data;
-//     try {
-//       const jwt_res = jwt.verify(token, process.env.JWT_SECRET);
-//       const user = await User.findById(jwt_res.id);
+  ws.on("message", async (data) => {
+    try {
+      const { token, message } = JSON.parse(data);
+      const jwt_res = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(jwt_res.id);
 
-//       if (user) {
-//         const newMessage = new Message({
-//           username: user.username,
-//           message,
-//         });
-//         await newMessage.save();
+      if (user) {
+        const newMessage = new Message({
+          username: user.username,
+          message,
+        });
+        await newMessage.save();
 
-//         io.emit("message", {
-//           username: user.username,
-//           message,
-//           timestamp: newMessage.timestamp,
-//         });
-//       }
-//     } catch (err) {
-//       socket.emit("error", { message: "Invalid token" });
-//     }
-//   });
-// });
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(
+              JSON.stringify({
+                username: user.username,
+                message,
+                timestamp: newMessage.timestamp,
+              })
+            );
+          }
+        });
+      }
+    } catch (err) {
+      ws.send(JSON.stringify({ error: "Invalid token" }));
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("WebSocket disconnected");
+  });
+});
 
 app.get("/", async (req, res) => {
   const data = await User.find({});
