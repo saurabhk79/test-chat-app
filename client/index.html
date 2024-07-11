@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Chat Application</title>
+</head>
+<body>
+  <div id="auth">
+    <div class="tab">
+      <button class="tablinks" onclick="openTab(event, 'Login')">Login</button>
+      <button class="tablinks" onclick="openTab(event, 'Register')">Register</button>
+    </div>
+
+    <div id="Login" class="tabcontent">
+      <h3>Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="Register" class="tabcontent">
+      <h3>Register</h3>
+      <input type="text" id="registerUsername" placeholder="Username">
+      <input type="email" id="registerEmail" placeholder="Email">
+      <input type="password" id="registerPassword" placeholder="Password">
+      <button onclick="register()">Register</button>
+    </div>
+  </div>
+
+  <div id="chat" style="display:none;">
+    <div id="messages"></div>
+    <input type="text" id="message" placeholder="Type a message">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="index.js"></script>
+  <script>
+    function openTab(e, tab) {
+      let i, tabcontent, tablinks;
+
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      document.getElementById(tab).style.display = "block";
+      e.currentTarget.className += " active";
+    }
+
+    document.getElementsByClassName("tablinks")[0].click();
+  </script>
+</body>
+</html>

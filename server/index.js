@@ -1,52 +1,71 @@
 require("dotenv").config();
 const express = require("express");
+const http = require("http");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const WebSocket = require("ws");
+// const socketIO = require("socket.io");
+const cors = require("cors");
 
 const User = require("./models/user");
 const Message = require("./models/message");
 
 const app = express();
+
+app.use((req, res, next) => {
+  console.log("Request Headers:", req.headers);
+  console.log("Request Method:", req.method);
+  next();
+});
+
 app.use(express.json());
+app.use(cors());
+// app.options("*", cors());
 
-mongoose.connect(process.env.MONGODB_URI);
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-const PORT = process.env.PORT || 3000;
+const server = http.createServer(app);
 
-const server = app.listen(PORT, () =>
-  console.log("Server started on port" + PORT)
-);
+// const io = socketIO(server, {
+//   cors: {
+//     origin: "*",
+//   },
+// });
 
-const wss = new WebSocket.Server({ server });
+// io.on("connection", (socket) => {
+//   console.log("Socket connected:", socket.id);
 
-wss.on("connection", (ws, req) => {
-  ws.on("message", async (data) => {
-    const { token, message } = JSON.parse(data);
-    try {
-      const jwt_res = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(jwt_res.id);
+//   socket.on("message", async (data) => {
+//     const { token, message } = data;
+//     try {
+//       const jwt_res = jwt.verify(token, process.env.JWT_SECRET);
+//       const user = await User.findById(jwt_res.id);
 
-      if (user) {
-        const newMessage = new Message({ username: user.username, message });
-        await newMessage.save();
+//       if (user) {
+//         const newMessage = new Message({
+//           username: user.username,
+//           message,
+//         });
+//         await newMessage.save();
 
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(
-              JSON.stringify({
-                username: user.username,
-                message,
-                timestamp: newMessage.timestamp,
-              })
-            );
-          }
-        });
-      }
-    } catch (err) {
-      ws.send(JSON.stringify({ error: "Invalid token" }));
-    }
-  });
+//         io.emit("message", {
+//           username: user.username,
+//           message,
+//           timestamp: newMessage.timestamp,
+//         });
+//       }
+//     } catch (err) {
+//       socket.emit("error", { message: "Invalid token" });
+//     }
+//   });
+// });
+
+app.get("/", async (req, res) => {
+  const data = await User.find({});
+  console.log(data);
+  res.json({ hello: "hello!" });
 });
 
 app.post("/register", async (req, res) => {
@@ -75,4 +94,10 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     res.status(500).send(err.message);
   }
+});
+
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
