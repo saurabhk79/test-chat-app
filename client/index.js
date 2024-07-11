@@ -39,7 +39,7 @@ function login() {
 }
 
 function initWebSocket() {
-  socket = new WebSocket("wss://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev");
+  socket = new WebSocket("wss://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev");
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
