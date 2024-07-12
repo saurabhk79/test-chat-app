@@ -22,7 +22,7 @@ function register() {
 function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
-  fetch("hhttps://test-chat-app-server.vercel.app/login", {
+  fetch("https://test-chat-app-server.vercel.app/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -39,7 +39,7 @@ function login() {
 }
 
 function initWebSocket() {
-  socket = new WebSocket("wss://https://test-chat-app-server.vercel.app/");
+  socket = new WebSocket("wss://test-chat-app-server.vercel.app");
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
