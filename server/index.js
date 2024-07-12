@@ -11,11 +11,11 @@ const Message = require("./models/message");
 
 const app = express();
 
-app.use((req, res, next) => {
-  console.log("Request Headers:", req.headers);
-  console.log("Request Method:", req.method);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log("Request Headers:", req.headers);
+//   console.log("Request Method:", req.method);
+//   next();
+// });
 
 app.use(express.json());
 
@@ -25,11 +25,11 @@ const allowedOrigins = [
 ];
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: function (origin, func) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, origin);
+      func(null, origin);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      func(new Error("Not allowed by CORS"));
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

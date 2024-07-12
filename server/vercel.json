@@ -13,9 +13,9 @@
       }
     ],
     "env": {
-      "MONGODB_URI": "@mongodb_uri",
-      "JWT_SECRET": "@jwt_secret",
-      "PORT": "3000"
+      "MONGODB_URI": "mongodb+srv://saurabh:saurabh_all@cluster0.zzf0lgm.mongodb.net/test-chat-app?retryWrites=true&w=majority&appName=Cluster0",
+      "JWT_SECRET": "MY_SECRET",
+      "PORT": "6000"
     }
   }
   
