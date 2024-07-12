@@ -22,8 +22,8 @@ app.use(express.json());
 const allowedOrigins = [
   "https://ominous-chainsaw-wpx5974xwg627pv-3000.app.github.dev",
   "https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev",
-  "https://test-chat-app-client.vercel.app/",
-  "https://test-chat-app-server.vercel.app/",
+  "https://test-chat-app-client.vercel.app",
+  "https://test-chat-app-server.vercel.app",
 ];
 
 const corsOptions = {
