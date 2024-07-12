@@ -10,40 +10,42 @@
     <header>
       <div class="logo">My Chat App</div>
     </header>
+    
+    <main class="main">
+      <div id="auth">
+        <div class="tab">
+          <button class="tablinks" onclick="openTab(event, 'Login')">
+            Login
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'Register')">
+            Register
+          </button>
+        </div>
 
-    <div id="auth">
-      <div class="tab">
-        <button class="tablinks" onclick="openTab(event, 'Login')">
-          Login
-        </button>
-        <button class="tablinks" onclick="openTab(event, 'Register')">
-          Register
-        </button>
+        <div id="Login" class="tabcontent">
+          <h3>Welcome back, mate!</h3>
+          <input type="email" id="loginEmail" placeholder="Email" />
+          <input type="password" id="loginPassword" placeholder="Password" />
+          <button onclick="login()">Login</button>
+        </div>
+
+        <div id="Register" class="tabcontent">
+          <h3>Hey, there! Please Register!</h3>
+          <input type="text" id="registerUsername" placeholder="Username" />
+          <input type="email" id="registerEmail" placeholder="Email" />
+          <input type="password" id="registerPassword" placeholder="Password" />
+          <button onclick="register()">Register</button>
+        </div>
       </div>
 
-      <div id="Login" class="tabcontent">
-        <h3>Welcome back, mate!</h3>
-        <input type="email" id="loginEmail" placeholder="Email" />
-        <input type="password" id="loginPassword" placeholder="Password" />
-        <button onclick="login()">Login</button>
+      <div id="chat" style="display: none">
+        <div id="messages"></div>
+        <div class="chat-others">
+          <input type="text" id="message" placeholder="Type a message" />
+          <button onclick="sendMessage()">Send</button>
+        </div>
       </div>
-
-      <div id="Register" class="tabcontent">
-        <h3>Hey, there! Please Register!</h3>
-        <input type="text" id="registerUsername" placeholder="Username" />
-        <input type="email" id="registerEmail" placeholder="Email" />
-        <input type="password" id="registerPassword" placeholder="Password" />
-        <button onclick="register()">Register</button>
-      </div>
-    </div>
-
-    <div id="chat" style="display: none">
-      <div id="messages"></div>
-      <div class="chat-others">
-        <input type="text" id="message" placeholder="Type a message" />
-      <button onclick="sendMessage()">Send</button>
-      </div>
-    </div>
+    </main>
 
     <script src="index.js"></script>
     <script>

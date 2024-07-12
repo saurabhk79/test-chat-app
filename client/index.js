@@ -74,9 +74,7 @@ function sendMessage() {
   const message = document.getElementById("message").value;
 
   document.getElementById("message").value = "";
-  if (socket.readyState === WebSocket.OPEN) {
+  if (socket.readyState === WebSocket.OPEN)
     socket.send(JSON.stringify({ token, message }));
-  } else {
-    console.error("WebSocket is not open. Ready state is:", socket.readyState);
-  }
+  else console.error("WebSocket error.");
 }
