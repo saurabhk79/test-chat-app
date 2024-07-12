@@ -6,17 +6,14 @@ function register() {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
-  fetch(
-    "https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/register",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ username, email, password }),
-    }
-  )
+  fetch("https://test-chat-app-server.vercel.app/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ username, email, password }),
+  })
     .then((response) => response.text())
     .then((data) => alert(data))
     .catch((error) => console.error("Error:", error));
@@ -25,7 +22,7 @@ function register() {
 function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
-  fetch("https://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev/login", {
+  fetch("hhttps://test-chat-app-server.vercel.app/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -42,9 +39,7 @@ function login() {
 }
 
 function initWebSocket() {
-  socket = new WebSocket(
-    "wss://ominous-chainsaw-wpx5974xwg627pv-6000.app.github.dev"
-  );
+  socket = new WebSocket("wss://https://test-chat-app-server.vercel.app/");
 
   socket.onopen = () => {
     console.log("WebSocket connection established");
